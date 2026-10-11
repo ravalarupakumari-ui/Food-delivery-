@@ -17,16 +17,21 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Build APK
+      - name: Set up Gradle 8.7
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Build Debug APK
         run: |
           if [ -f "./gradlew" ]; then
             chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace
+            ./gradlew assembleDebug --no-daemon --stacktrace
           else
-            gradle assembleDebug --stacktrace
+            gradle assembleDebug --no-daemon --stacktrace
           fi
 
       - name: Upload APK
