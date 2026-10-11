@@ -22,13 +22,15 @@ jobs:
         with:
           gradle-version: '9.3.1'
 
-      - name: Build Debug APK
+      - name: Generate Debug Keystore & Build APK
         env:
           ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
           yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
           gradle wrapper --gradle-version 9.3.1
           chmod +x gradlew
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          cp debug.keystore app/debug.keystore || true
           ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
@@ -36,3 +38,4 @@ jobs:
         with:
           name: Craveon-APK
           path: app/build/outputs/apk/debug/*.apk
+          
